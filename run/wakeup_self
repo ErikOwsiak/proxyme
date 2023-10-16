@@ -1,0 +1,47 @@
+#!/usb/bin/env python3
+
+import os, sys, flask
+from flask import request as req
+# -- change to root folder --
+os.chdir("../")
+sys.path.insert(0, os.getcwd())
+from syscore.systypes import *
+
+
+BIND_IP: str = "0.0.0.0"
+BIND_PORT: int = 8086
+STATIC_DIR: str = ""
+STATIC_URL: str = ""
+TEMPLATE_DIR: str = ""
+
+
+APP_NAME: str = "proxyMe"
+proxyMeApp: flask.Flask = flask.Flask(APP_NAME,
+   template_folder=TEMPLATE_DIR, static_url_path=STATIC_URL,
+   static_folder=STATIC_DIR)
+
+
+@proxyMeApp.route("/")
+def index():
+   try:
+      return "index"
+   except Exception as e:
+      print(e)
+
+
+@proxyMeApp.route("/self/imprint/", methods=[httpMethod.POST.name])
+def self_imprint():
+   try:
+      from syscore.selfOps import selfOps
+      buff: str = req.data.decode("utf-8")
+      if buff in [None, ""]:
+         return ""
+      _selfOps: selfOps = selfOps()
+      return _selfOps.imprint(buff)
+   except Exception as e:
+      print(e)
+
+
+# -- -- [ entry point ] -- --
+if __name__ == "__main__":
+   proxyMeApp.run(host=BIND_IP, port=BIND_PORT, debug=True)
