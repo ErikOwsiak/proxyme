@@ -2,10 +2,12 @@
 
 import os, sys, flask
 from flask import request as req
+from flask import Response as rsp
 # -- change to root folder --
 os.chdir("../")
 sys.path.insert(0, os.getcwd())
 from syscore.systypes import *
+from syscore.selfOps import selfOps
 
 
 BIND_IP: str = "0.0.0.0"
@@ -13,6 +15,8 @@ BIND_PORT: int = 8086
 STATIC_DIR: str = ""
 STATIC_URL: str = ""
 TEMPLATE_DIR: str = ""
+CT_JSON: str = "application/json"
+CT_ERROR: str = "runtime/error"
 
 
 APP_NAME: str = "proxyMe"
@@ -32,14 +36,22 @@ def index():
 @proxyMeApp.route("/self/imprint/", methods=[httpMethod.POST.name])
 def self_imprint():
    try:
-      from syscore.selfOps import selfOps
+      rsp.content_type = CT_JSON
       buff: str = req.data.decode("utf-8")
       if buff in [None, ""]:
          return ""
+      # -- -- -- --
       _selfOps: selfOps = selfOps()
-      return _selfOps.imprint(buff)
+      _selfOps.init()
+      code, msg = _selfOps.imprint("text/url", buff)
+      code: sysCode = code
+      if code != sysCode.OK:
+         pass
+      else:
+         return code.OK.name
    except Exception as e:
-      print(e)
+      rsp.content_type = CT_ERROR
+      return str(e)
 
 
 # -- -- [ entry point ] -- --
