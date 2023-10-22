@@ -8,6 +8,12 @@ class httpMethod(enum.IntEnum):
    PUT = 2
 
 
+class httpVerb(object):
+   POST = "POST"
+   GET = "GET"
+   PUT = "PUT"
+
+
 class sysCode(enum.IntEnum):
    OK = 0
    ERROR = 1000
