@@ -53,7 +53,6 @@ def self_data(data_qry: str):
       rsp.content_type = CT_ERROR
       return str(e)
 
-
 @proxyMeApp.route("/self/data/out/<qry>", methods=[httpVerb.GET])
 def self_data(qry: str):
    try:
